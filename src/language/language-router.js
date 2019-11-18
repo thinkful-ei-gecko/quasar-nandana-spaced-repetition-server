@@ -91,8 +91,13 @@ languageRouter
 
       const list = LanguageService.populateList(words);
       if (guess === list.head.value.translation){
+        list.head.value.correct_count += 1;
+        list.head.value.memory_value += 2;
         
-      } 
+      } else{
+        list.head.value.incorrect_count += 1;
+        list.head.value.memory_value += 2;
+      }
   
       
       }
