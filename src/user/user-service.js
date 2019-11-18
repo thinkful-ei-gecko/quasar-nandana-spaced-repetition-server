@@ -46,7 +46,7 @@ const UserService = {
       const [languageId] = await trx
         .into('language')
         .insert([
-          { name: 'French', user_id },
+          { name: 'Morse', user_id },
         ], ['id'])
 
       // when inserting words,
@@ -58,14 +58,32 @@ const UserService = {
         .first()
 
       const languageWords = [
-        ['entraine toi', 'practice', 2],
-        ['bonjour', 'hello', 3],
-        ['maison', 'house', 4],
-        ['développeur', 'developer', 5],
-        ['traduire', 'translate', 6],
-        ['incroyable', 'amazing', 7],
-        ['chien', 'dog', 8],
-        ['chat', 'cat', null],
+        [ '.-', 'A', 2],
+        ['-...', 'B', 3],
+        ['-.-.', 'C', 4],
+        ['-..', 'D', 5],
+        ['.', 'E', 6],
+        ['..-.', 'F', 7],
+        ['--.', 'G', 8],
+        ['....', 'H', 9],
+        ['..', 'I', 10],
+        [ '.---', 'J', 11],
+        [ '-.-', 'K', 12],
+        [ '.-..', 'L', 13],
+        [ '--', 'M', 14],
+        [ '-.', 'N', 15],
+        [ '---', 'O', 16],
+        [ '.--.', 'P', 17],
+        [ '--.-', 'Q', 18],
+        [ '.-.', 'R', 19],
+        [ '...', 'S', 20],
+        [ '-', 'T', 21],
+        [ '..-', 'U', 22],
+        [ '...-', 'V', 23],
+        [ '.--', 'W', 24],
+        [ '-..-', 'X', 25],
+        [ '-.--', 'Y', 26],
+        [ '--..', 'Z', null]
       ]
 
       const [languageHeadId] = await trx
