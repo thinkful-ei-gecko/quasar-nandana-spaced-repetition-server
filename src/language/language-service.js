@@ -1,4 +1,3 @@
-const LinkedList = require('./linkedList');
 const LanguageService = {
   getUsersLanguage(db, user_id) {
     return db
@@ -11,75 +10,39 @@ const LanguageService = {
         'language.total_score',
       )
       .where('language.user_id', user_id)
-      .first()
+      .first();
   },
 
   getLanguageWords(db, language_id) {
     return db
       .from('word')
-      .select(
-        'id',
-        'language_id',
-        'original',
-        'translation',
-        'next',
-        'memory_value',
-        'correct_count',
-        'incorrect_count',
-      )
-      .where({ language_id })
+      .select()
+      .where({language_id})
+      .orderBy('next', 'asc');
   },
 
-  getWordByHead(db,id){
+  getWordByHead(db, id) {
     return db
-    .from ('word')
-    .select('*')
-    .where({id})
+      .from('word')
+      .select('*')
+      .where({id});
+  },
+  updateWords(db, currNode, nextNode) {
+    return db('word')
+      .where({id: currNode.id, language_id: currNode.language_id})
+      .update({
+        memory_value: currNode.memory_value,
+        correct_count: currNode.correct_count,
+        incorrect_count: currNode.incorrect_count,
+        next: ( nextNode != null ) ? nextNode.id : null
+      });
   },
 
-  populateList(words) {
-    const list = new LinkedList();
-    words.forEach(word => list.insertLast(word));
-    return list;
-  },
-
-  movehead(db,list){
-    //console.log(list.size())
-    const temp = list.head;
-    list.remove(list.head.value);//moving head to next node
-    
-    nNode = list._findNthElement(temp.value.memory_value);
-    temp.value.next = nNode.value.next;
-    nNode.value.next = temp.value.id;
-    //temp.value.next = nNode.value.next;
-    list.insertAt(temp.value.memory_value, temp);
-    LanguageService.updateWords(db,temp);
-    LanguageService.updateWords(db,nNode)
-    return list;
-  },
-  
-  updateWords(db,temp){
-
-    //update temp and nNode
-    db('word')
-    .where({id:temp.value.next})
-    .update({
-      original:temp.value.original,
-      translation:temp.value.translation,
-      memory_value: temp.value.memory_value,
-      correct_count: temp.value.correct_count,
-      incorrect_count: temp.value.incorrect_count,})
-
-    
-  },
-
-  updateTotalScore(db, id, total) {
+  updateTotalScore(db, id, user_id, total_score) {
     return db('language')
-      .where({ id })
-      .update({ total_score: total });
+      .where({id, user_id})
+      .update({total_score});
   },
+};
 
-
-}
-
-module.exports = LanguageService
+module.exports = LanguageService;
