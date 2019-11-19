@@ -96,7 +96,7 @@ class LinkedList {
     let currNode = this.head;
     //keep track of previous
     let previousNode = this.head;
-    while ((currNode !== null) && (currNode.value !== item)) {
+    while ((currNode != null) && (currNode.value !== item)) {
       //save the previous node 
       previousNode = currNode;
       currNode = currNode.next;

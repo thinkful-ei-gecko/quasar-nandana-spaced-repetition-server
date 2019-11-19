@@ -67,86 +67,79 @@ languageRouter.get('/head', async (req, res, next) => {
 });
 
 languageRouter.post('/guess', jsonBodyParser, async (req, res, next) => {
-  // implement me
-  // prettier-ignore
-  try{
-      const {guess} =req.body
-      if (!req.body.guess) {
-        return res
-        .status(400)
-        .json({
-          error: `Missing 'guess' in request body`
-        });
-      }
+  try {
+    const { guess } = req.body;
+    if (!req.body.guess) {
+      return res.status(400).json({
+        error: `Missing 'guess' in request body`
+      });
+    }
 
-      // prettier-ignore
-      const words = await LanguageService.getLanguageWords(
+    const words = await LanguageService.getLanguageWords(
+      req.app.get('db'),
+      req.language.id
+    );
+
+    const list = new LinkedList();
+    words.forEach(word => list.insertLast(word));
+
+    // check answer
+    let correct = false;
+    if (guess === list.head.value.translation) {
+      correct = true;
+      ++list.head.value.correct_count;
+      list.head.value.memory_value *= 2;
+      ++req.language.total_score;
+    } else {
+      ++list.head.value.incorrect_count;
+      list.head.value.memory_value = 1;
+    }
+
+    let pNode = list.head;
+    while (pNode != null) {
+      console.log(`pNode: ${pNode.value.translation}, ${pNode.value.correct_count}, ${pNode.value.next},`);
+      pNode = pNode.next;
+    }
+
+    const oldHead = list.head; // old head node
+    list.remove(list.head.value); //moving head to next node
+    list.insertAt(oldHead.value.memory_value, oldHead.value);
+
+/*     let sNode = list.head;
+    while (sNode != null) {
+      console.log(`sNode: ${sNode.value.translation}, ${sNode.value.correct_count}, ${sNode.value.next},`);
+      sNode = sNode.next;
+    } */
+
+    let tNode = list.head;
+    while (tNode != null) {
+      await LanguageService.updateWords(
         req.app.get('db'),
-        req.language.id
+        tNode.value,
+        tNode.next != null ? tNode.next.value : null
       );
+      tNode = tNode.next;
+    }
 
-      const list = new LinkedList();
-      words.forEach(word => list.insertLast(word));
-    /*   const list = LanguageService.populateList(words);
-      populateList(words) {
-        const list = new LinkedList();
-        words.forEach(word => list.insertLast(word));
-        return list;
-      }, */
-      // console.log(list.head.value.translation);
-      
-      // check answer
-      let correct = false;
-      if (guess === list.head.value.translation){
-        correct = true;     
-        list.head.value.correct_count++;
-        list.head.value.memory_value *= 2; 
-        req.language.total_score++;  
-      } else{
-        list.head.value.incorrect_count++;
-        list.head.value.memory_value = 1;
-      }
+    await LanguageService.updateTotalScore(
+      req.app.get('db'),
+      req.language.id,
+      req.language.user_id,
+      req.language.total_score
+    );
 
-      const oldHead = list.head;      // old head node
-      list.remove(list.head.value);   //moving head to next node
-      list.insertAt(oldHead.value.memory_value, oldHead.value);
-  
-      let snode = list.head;
-      while (snode != null) {
-        console.log(`snode: ${snode.value.translation}`);
-        snode = snode.next;
-      }
-
-      let tNode = list.head;
-      while (tNode.next != null) {
-        await LanguageService.updateWords(
-          req.app.get('db'), 
-          tNode.value,
-          (tNode.next != null) ? tNode.next.value : null);
-
-        tNode = tNode.next;
-      }
-
-      await LanguageService.updateTotalScore(
-        req.app.get('db'),
-        req.language.id,
-        req.language.user_id,
-        req.language.total_score
-      );
-
-      const response = {
-        nextWord: list.head.value.original,
-        wordCorrectCount: list.head.value.correct_count,
-        wordIncorrectCount: list.head.value.incorrect_count,
-        totalScore: req.language.total_score,
-        answer: oldHead.value.translation,
-        isCorrect: correct
-      };
-      return res.status(200).json(response);
-      }
-      catch (error) {
-        next(error)
-      }
+    const response = {
+      nextWord: list.head.value.original,
+      wordCorrectCount: list.head.value.correct_count,
+      wordIncorrectCount: list.head.value.incorrect_count,
+      totalScore: req.language.total_score,
+      answer: oldHead.value.translation,
+      isCorrect: correct
+    };
+    return res.status(200).json(response);
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = languageRouter;
