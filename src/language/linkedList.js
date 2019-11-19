@@ -64,6 +64,9 @@ class LinkedList {
     }
     if (nthPosition === 0) {
       this.insertFirst(itemToInsert);
+    }
+    if(nthPosition > this.size()) {
+      this.insertLast(itemToInsert);
     }else {
       // Find the node which we want to insert after
       const node = this._findNthElement(nthPosition - 1);
@@ -125,30 +128,32 @@ class LinkedList {
     //found it
     return currNode;
   }
-}
 
-function displayList(list){
-  let currNode = list.head;
-  while (currNode !== null) {
-    console.log(currNode.value);
-    currNode = currNode.next;
-  }
-}
-
-function size(lst){
-  let counter = 0;
-  let currNode = lst.head;
-  if(!currNode){
+  size() {
+    let counter = 0;
+    let currNode = this.head;
+    if (!currNode) {
+      return counter;
+    } else counter++;
+    while (!(currNode.next == null)) {
+      counter++;
+      currNode = currNode.next;
+    }
     return counter;
   }
-  else
-    counter++;
-  while (!(currNode.next == null)) {
-    counter++;
-    currNode = currNode.next;
+
+  displayList() {
+    const arr = [];
+    let currNode = this.head;
+    while (currNode !== null) {
+      arr.push(currNode.value);
+      currNode = currNode.next;
+    }
+    return arr;
   }
-  return counter;
 }
+
+
 
 function isEmpty(lst){
   let currNode = lst.head;

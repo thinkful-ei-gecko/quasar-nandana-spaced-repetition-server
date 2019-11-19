@@ -37,11 +37,48 @@ const LanguageService = {
     .where({id})
   },
 
-  populateList(words){
-    let wordList = new LinkedList();
+  populateList(words) {
+    const list = new LinkedList();
     words.forEach(word => list.insertLast(word));
-    return wordList;
-  }
+    return list;
+  },
+
+  movehead(db,list){
+    //console.log(list.size())
+    const temp = list.head;
+    list.remove(list.head.value);//moving head to next node
+    
+    nNode = list._findNthElement(temp.value.memory_value);
+    temp.value.next = nNode.value.next;
+    nNode.value.next = temp.value.id;
+    //temp.value.next = nNode.value.next;
+    list.insertAt(temp.value.memory_value, temp);
+    LanguageService.updateWords(db,temp);
+    LanguageService.updateWords(db,nNode)
+    return list;
+  },
+  
+  updateWords(db,temp){
+
+    //update temp and nNode
+    db('word')
+    .where({id:temp.value.next})
+    .update({
+      original:temp.value.original,
+      translation:temp.value.translation,
+      memory_value: temp.value.memory_value,
+      correct_count: temp.value.correct_count,
+      incorrect_count: temp.value.incorrect_count,})
+
+    
+  },
+
+  updateTotalScore(db, id, total) {
+    return db('language')
+      .where({ id })
+      .update({ total_score: total });
+  },
+
 
 }
 

@@ -91,15 +91,28 @@ languageRouter
 
       const list = LanguageService.populateList(words);
       if (guess === list.head.value.translation){
-        list.head.value.correct_count += 1;
-        list.head.value.memory_value += 2;
-        
+        list.head.value.correct_count++;
+        list.head.value.memory_value *= 2; 
+        req.language.total_score++;       
       } else{
-        list.head.value.incorrect_count += 1;
-        list.head.value.memory_value += 2;
+        list.head.value.incorrect_count++;
+        list.head.value.memory_value = 1;
       }
-  
-      
+      LanguageService.movehead(req.app.get('db'),list)
+      LanguageService.updateTotalScore(
+        req.app.get('db'),
+       req.language.id,
+       req.language.total_score
+      );
+      response = {
+        nextWord: list.head.value.original,
+        wordCorrectCount: list.head.value.correct_count,
+        wordIncorrectCount: list.head.value.incorrect_count,
+        totalScore: req.language.total_score,
+        answer: list.head.value.translation,
+        isCorrect: guess === list.head.value.translation
+      };
+      return res.status(200).json(response);
       }
       catch (error) {
         next(error)

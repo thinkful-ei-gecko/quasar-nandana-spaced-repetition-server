@@ -17,7 +17,7 @@ VALUES
 
 INSERT INTO "language" ("id", "name", "user_id")
 VALUES
-  (1, 'Morse', 1);
+  (1, 'Morse Code', 1);
 
 INSERT INTO "word" ("id", "language_id", "original", "translation", "next")
 VALUES
