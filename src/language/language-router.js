@@ -86,7 +86,7 @@ languageRouter.post('/guess', jsonBodyParser, async (req, res, next) => {
 
     // check answer
     let correct = false;
-    if (guess === list.head.value.translation) {
+    if (guess.toUpperCase() === list.head.value.translation.toUpperCase()) {
       correct = true;
       ++list.head.value.correct_count;
       list.head.value.memory_value *= 2;
