@@ -46,7 +46,7 @@ const UserService = {
       const [languageId] = await trx
         .into('language')
         .insert([
-          { name: 'Morse', user_id },
+          { name: 'Morse Code', user_id },
         ], ['id'])
 
       // when inserting words,

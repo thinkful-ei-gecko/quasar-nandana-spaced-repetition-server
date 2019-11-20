@@ -172,7 +172,7 @@ describe('User Endpoints', function () {
           name: 'test name',
         }
         const expectedList = {
-          name: 'Morse',
+          name: 'Morse Code',
           total_score: 0,
           words: [
             { original: '.-', translation:'A'},
