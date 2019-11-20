@@ -43,22 +43,17 @@ languageRouter.get('/', async (req, res, next) => {
 });
 
 languageRouter.get('/head', async (req, res, next) => {
-  // implement me
   try {
-    const language = await LanguageService.getUsersLanguage(
+    const [word] = await LanguageService.getWordById(
       req.app.get('db'),
-      req.user.id
-    );
-    const [word] = await LanguageService.getWordByHead(
-      req.app.get('db'),
-      language.head
+      req.language.head
     );
 
     res.json({
       nextWord: word.original,
       wordCorrectCount: word.correct_count,
       wordIncorrectCount: word.incorrect_count,
-      totalScore: language.total_score
+      totalScore: req.language.total_score
     });
     next();
   } catch (error) {
@@ -67,6 +62,8 @@ languageRouter.get('/head', async (req, res, next) => {
 });
 
 languageRouter.post('/guess', jsonBodyParser, async (req, res, next) => {
+  const srdb = req.app.get('db');
+
   try {
     const { guess } = req.body;
     if (!req.body.guess) {
@@ -75,13 +72,17 @@ languageRouter.post('/guess', jsonBodyParser, async (req, res, next) => {
       });
     }
 
-    const words = await LanguageService.getLanguageWords(
-      req.app.get('db'),
-      req.language.id
-    );
-
+    // get head, insert into LL
     const list = new LinkedList();
-    words.forEach(word => list.insertLast(word));
+    let [hNode] = await LanguageService.getWordById(srdb, req.language.head);
+    list.insertFirst(hNode);
+
+    // get rest of words of DB
+    while (hNode.next != null) {
+      const [lnode] = await LanguageService.getWordById(srdb, hNode.next);
+      list.insertLast(lnode);
+      hNode = lnode;
+    }
 
     // check answer
     let correct = false;
@@ -95,34 +96,31 @@ languageRouter.post('/guess', jsonBodyParser, async (req, res, next) => {
       list.head.value.memory_value = 1;
     }
 
-    let pNode = list.head;
-    while (pNode != null) {
-      console.log(`pNode: ${pNode.value.translation}, ${pNode.value.correct_count}, ${pNode.value.next},`);
-      pNode = pNode.next;
-    }
-
-    const oldHead = list.head; // old head node
-    list.remove(list.head.value); //moving head to next node
+    // move previous word to new pos.
+    const oldHead = list.head;
+    list.remove(list.head.value);
     list.insertAt(oldHead.value.memory_value, oldHead.value);
 
-/*     let sNode = list.head;
-    while (sNode != null) {
-      console.log(`sNode: ${sNode.value.translation}, ${sNode.value.correct_count}, ${sNode.value.next},`);
-      sNode = sNode.next;
-    } */
-
     let tNode = list.head;
+    let langHead = tNode.value.id;
     while (tNode != null) {
       await LanguageService.updateWords(
-        req.app.get('db'),
+        srdb,
         tNode.value,
         tNode.next != null ? tNode.next.value : null
       );
       tNode = tNode.next;
     }
 
+    await LanguageService.updateHead(
+      srdb,
+      req.language.id,
+      req.language.user_id,
+      langHead
+    );
+
     await LanguageService.updateTotalScore(
-      req.app.get('db'),
+      srdb,
       req.language.id,
       req.language.user_id,
       req.language.total_score
