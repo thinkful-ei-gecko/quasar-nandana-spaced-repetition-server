@@ -12,12 +12,12 @@ Demo password: pass<br/>
 ### Overview
 | Method | Endpoint            | Usage                      | Returns      |
 | ------ | --------            | -----                      | -------      |
-| POST   | /api/auth/token     | Authenticate a user        | JWT          | 
-| PUT    | /api/auth/token     | Re-authenticate a user     | JWT          | 
-| POST   | /api/user           | Register a new user        | User Object  | 
-| GET    | /api/language       | Get language data          |  Object      | 
-| GET    | /api/language/head  | Get first word from db     |  Object  | 
-| POST   | /api/language/guess | Send answer given by user  |  Object  | 
+| POST   | [/api/auth/token](#/api/auth/token)     | Authenticate a user        | JWT          | 
+| PUT    | [/api/auth/token](#/api/auth/token)     | Re-authenticate a user     | JWT          | 
+| POST   | [/api/user](#/api/user)          | Register a new user        | User Object  | 
+| GET    | [/api/language](#/api/language)       | Get language data          |  Object      | 
+| GET    | [/api/language/head](#/api/language/head)  | Get first word from db     |  Object  | 
+| POST   | [/api/language/guess](#/api/language/guess) | Send answer given by user  |  Object  | 
 
 ### Authentication
 #### `/api/auth/token`
