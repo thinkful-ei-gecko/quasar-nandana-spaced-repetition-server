@@ -1,25 +1,65 @@
 # Spaced repetition - Learn Morse Code!
 
-This app helps people memorize Morse Code.The app will display the alphabets in Morse code, and ask you to recall the corresponding alphabet.
+This app helps people memorize Morse Code. The app will display the alphabet in Morse code, and ask you to recall the alphabetic representation for each encoded letter.
 
-See this app live at: <br/>
+[Live App](https://m-o-r-s-e.now.sh/)  
 Demo username: admin<br/>
 Demo password: pass<br/>
-client Repo https://github.com/thinkful-ei-gecko/quasar-nandana-spaced-repetition-client<br/>
-API Repo https://github.com/thinkful-ei-gecko/quasar-nandana-spaced-repetition-server<br/>
+[Client Repo](https://github.com/thinkful-ei-gecko/quasar-nandana-spaced-repetition-client)  
+[API Repo](https://github.com/thinkful-ei-gecko/quasar-nandana-spaced-repetition-server)  
 
 ## API EndPoints
+### Overview
+| Method | Endpoint            | Usage                      | Returns      |
+| ------ | --------            | -----                      | -------      |
+| POST   | /api/auth/token     | Authenticate a user        | JWT          | 
+| PUT    | /api/auth/token     | Re-authenticate a user     | JWT          | 
+| POST   | /api/user           | Register a new user        | User Object  | 
+| GET    | /api/language       | Get language data          |  Object      | 
+| GET    | /api/language/head  | Get first word from db     |  Object  | 
+| POST   | /api/language/guess | Send answer given by user  |  Object  | 
 
-POST/api/auth/token -Login to the system 
+### Authentication
+#### `/api/auth/token`
 
-POST/api/user - SignUp New Users.
+### User Registration
+#### `/api/user`
 
-GET/api/language - Get alphabet list with morse code to learn.
+### Language
+#### `/api/language`
+##### OK response
+| Fields          | Type    | Description                           |
+| ---             | ---     | ---                                   |
+| language        | Object  | Contains data specific to the user including total score and the next letter to learn                            |
+| words           | Array   | Array of objects containing data for each letter     |
 
-GET/api/language/head -Get the the first alphabet in the list to practice.
 
-POST/api/languge/guess - Post your answer for the alphabet.
+#### `/api/language/head`
+###### OK response
+| Fields              | Type    | Description                           |
+| ---                 | ---     | ---                                   |
+| nextWord            | String  | Next symbol to translate              |
+| wordCorrectCount    | Int     | # correct answers for next symbol     |
+| wordIncorrectCount  | Int     | # incorrect answers for next symbol   |
+| totalScore          | Int     | User's total score                    |
 
-### Technologies Used
+#### `/api/language/guess`
+##### POST
+###### Request Body (JSON)
+| Fields |  Type  | Description |
+| ---    | ---    | ---         |
+| guess  | String | Contains the user's translation guess. Regarding morse code, should be an upper or lowercase letter. |
 
-#### Back-End * Node.js * Express.js * PostgreSQL
+###### OK response
+| Fields              | Type    | Description |
+| ---                 | ---     | ---         |
+| nextWord            | String  | Next symbol to translate                |
+| wordCorrectCount    | Int     | # correct answers for next symbol |
+| wordIncorrectCount  | Int     | # incorrect answers for next symbol|
+| totalScore          | Int     | User's total score |
+| answer              | String  | Correct Answer |
+| isCorrect           | Bool    | Was user's guess correct? |
+
+## Technologies Used
+
+Back-End * Node.js * Express.js * knex * PostgreSQL
