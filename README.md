@@ -10,14 +10,14 @@ Demo password: pass<br/>
 
 ## API EndPoints
 ### Overview
-| Method | Endpoint            | Usage                      | Returns      |
-| ------ | --------            | -----                      | -------      |
-| POST   | [/api/auth/token](# /api/auth/token)     | Authenticate a user        | JWT          | 
-| PUT    | [/api/auth/token](#/api/auth/token)     | Re-authenticate a user     | JWT          | 
-| POST   | [/api/user](#####\/api\/language\/head)          | Register a new user        | User Object  | 
-| GET    | [/api/language](####/api/language/head)       | Get language data          |  Object      | 
-| GET    | [/api/language/head](####`/api/language/head`)  | Get first word from db     |  Object  | 
-| POST   | [/api/language/guess](#technologies-used) | Send answer given by user  |  Object  | 
+| Method | Endpoint                                 | Usage                      | Returns      |
+| ------ | --------                                 | -----                      | -------      |
+| POST   | [/api/auth/token](#apiauthtoken)         | Authenticate a user        | JWT          | 
+| PUT    | [/api/auth/token](#apiauthtoken)         | Re-authenticate a user     | JWT          | 
+| POST   | [/api/user](#apiuser)                    | Register a new user        | User Object  | 
+| GET    | [/api/language](#apilanguage)            | Get language data          |  Object      | 
+| GET    | [/api/language/head](#apilanguagehead)   | Get first word from db     |  Object  | 
+| POST   | [/api/language/guess](#apilanguageguess) | Send answer given by user  |  Object  | 
 
 ### Authentication
 #### `/api/auth/token`
