@@ -18,7 +18,7 @@ const LanguageService = {
       .from('word')
       .select()
       .where({ language_id })
-      .orderBy('next', 'asc');
+      .orderBy('id', 'asc');
   },
 
   getWordById(db, id) {
